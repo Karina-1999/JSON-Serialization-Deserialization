@@ -1,5 +1,10 @@
-package com.example.networkproject
+package com.example.networkproject.api
+
+import com.example.networkproject.Product
+import com.example.networkproject.ProductsResponse
+import com.example.networkproject.UpdateProduct
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -21,15 +26,20 @@ interface ProductApi {
         @Query("skip") skip: Int
     ): ProductsResponse
 
-    @POST ("products/add")
+    @POST("products/add")
     suspend fun createPrpduct(
         @Body product: Product
     ): Product
 
 
-    @PUT ("products/{id}")
+    @PUT("products/{id}")
     suspend fun updateProduct(
         @Path("id") id: Int,
         @Body product: UpdateProduct
     ): Product
+
+    @DELETE("products/{id}")
+    suspend fun deleteProduct(
+        @Path("id") id: Int
+    )
 }
