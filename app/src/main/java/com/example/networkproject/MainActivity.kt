@@ -1,31 +1,66 @@
 package com.example.networkproject
 
 import android.os.Bundle
+import android.util.Log
+import android.util.Log.e
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import retrofit2.Retrofit
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 @Serializable
 data class Product (
     val id: Int,
     val title: String,
-    val price: Double
+    val price: Double,
+    val description: String = ""
+)
+
+@Serializable
+data class ProductsResponse(
+    val products: List<Product>
 )
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val product = Product(
-            id = 7,
-            title = "MacBook Pro",
-            price = 2499.99
-        )
-        val json = Json.encodeToString(product)
-        println(json)
+        val json = Json{
+            ignoreUnknownKeys = true
+        }
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://dummyjson.com/")
+            .addConverterFactory(
+                json.asConverterFactory("application/json".toMediaType())
+            )
+            .build()
 
-        val restoredProduct = Json.decodeFromString<Product>(json)
 
-        println(restoredProduct.title)
-        println(restoredProduct.price)
+        val productApi = retrofit.create(ProductApi::class.java)
+        lifecycleScope.launch {
+            try{
+                Log.d("PRODUCTS", "Начинаем запрос")
+
+                val newProduct = Product(
+                    id = 0,
+                    title = "My Product",
+                    price = 4.67,
+                    description = "My First Product"
+                )
+                val response = productApi.createPrpduct(newProduct)
+
+                Log.d("PRODUCTS", "Получили ответ")
+                Log.d("PRODUCTS", response.toString())
+            }
+                catch (e: Exception) {
+                    Log.e("PRODUCTS", "Тип ошибки: ${e::class.simpleName}")
+                    Log.e("PRODUCTS", "Сообщение: ${e.message}")
+                    e.printStackTrace()
+                }
+
+        }
     }
 }
