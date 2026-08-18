@@ -1,5 +1,6 @@
 package com.example.networkproject
 
+import android.R.attr.description
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.e
@@ -15,6 +16,13 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 @Serializable
 data class Product (
     val id: Int,
+    val title: String,
+    val price: Double,
+    val description: String = ""
+)
+
+@Serializable
+data class UpdateProduct(
     val title: String,
     val price: Double,
     val description: String = ""
@@ -50,7 +58,13 @@ class MainActivity : AppCompatActivity() {
                     price = 4.67,
                     description = "My First Product"
                 )
-                val response = productApi.createPrpduct(newProduct)
+
+                val upProduct = UpdateProduct(
+                    title = "appLE",
+                    price = 999.999,
+                    description = "I change this product"
+                )
+                val response = productApi.updateProduct(17, upProduct)
 
                 Log.d("PRODUCTS", "Получили ответ")
                 Log.d("PRODUCTS", response.toString())

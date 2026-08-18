@@ -2,6 +2,7 @@ package com.example.networkproject
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -23,5 +24,12 @@ interface ProductApi {
     @POST ("products/add")
     suspend fun createPrpduct(
         @Body product: Product
+    ): Product
+
+
+    @PUT ("products/{id}")
+    suspend fun updateProduct(
+        @Path("id") id: Int,
+        @Body product: UpdateProduct
     ): Product
 }
